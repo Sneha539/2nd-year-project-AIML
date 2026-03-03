@@ -2,3 +2,5 @@ intruders/
 __pycache__/
 logs.csv
 yolov8n.pt
+*.pyc
+.env
