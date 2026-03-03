@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Campus Security Dashboard</title>
+    <meta http-equiv="refresh" content="5">
+    <style>
+        body {
+            font-family: Arial;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+        h1 {
+            color: #333;
+        }
+        .card {
+            background: white;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        img {
+            max-width: 300px;
+            display: block;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<h1>AI Campus Intrusion Dashboard</h1>
+<h3>Total Intrusions: {{ total_intrusions }}</h3>
+
+{% for log in logs %}
+<div class="card">
+    <strong>Time:</strong> {{ log.timestamp }} <br>
+    <strong>Status:</strong> {{ log.status }} <br>
+    <img src="/{{ log.image_path }}" alt="Intruder Image">
+</div>
+{% endfor %}
+
+</body>
+</html>
