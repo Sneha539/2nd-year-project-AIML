@@ -3,6 +3,38 @@ from ultralytics import YOLO
 import datetime
 import os
 import csv
+import yagmail
+from dotenv import load_dotenv
+load_dotenv()
+
+EMAIL_SENDER = os.getenv("EMAIL_SENDER")
+EMAIL_PASSWORD = os.getenv("EMAIL_PASSWORD")
+EMAIL_RECEIVER = os.getenv("EMAIL_RECEIVER")
+
+def send_intruder_email(image_path, timestamp):
+    try:
+        yag = yagmail.SMTP(EMAIL_SENDER, EMAIL_PASSWORD)
+
+        subject = "🚨 Intruder Detected"
+        body = f"""
+        Intrusion detected by AI Security System.
+
+        Time: {timestamp}
+
+        Please check the attached image for evidence.
+        """
+
+        yag.send(
+            to=EMAIL_RECEIVER,
+            subject=subject,
+            contents=body,
+            attachments=image_path
+        )
+
+        print("Email alert sent.")
+
+    except Exception as e:
+        print("Email sending failed:", e)
 
 model = YOLO("yolov8n.pt")
 cap = cv2.VideoCapture(0)
@@ -58,6 +90,7 @@ while True:
                 timestamp_str = current_time.strftime("%Y%m%d_%H%M%S")
                 filename = f"intruders/intruder_{timestamp_str}.jpg"
                 cv2.imwrite(filename, frame)
+                send_intruder_email(filename, current_time)
 
                 # Log to CSV
                 with open(log_file, mode='a', newline='') as file:

@@ -1,6 +1,17 @@
+# Runtime generated data
 intruders/
-__pycache__/
 logs.csv
+
+# AI model weights
 yolov8n.pt
+
+# Python cache
+__pycache__/
 *.pyc
+
+# Environment / secrets
 .env
+
+# OS junk
+.DS_Store
+Thumbs.db
