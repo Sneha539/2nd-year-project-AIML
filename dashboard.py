@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, send_from_directory
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user
-import csv
 import os
+import sqlite3
 
 app = Flask(__name__)
 app.secret_key = "super_secret_key"
@@ -23,15 +23,28 @@ class User(UserMixin):
 def load_user(user_id):
     return User(user_id)
 
-LOG_FILE = "logs.csv"
-
 def read_logs():
+    conn = sqlite3.connect("intrusions.db")
+    cursor = conn.cursor()
+
+    cursor.execute("""
+    SELECT timestamp, status, image_path
+    FROM intrusions
+    ORDER BY id DESC
+    """)
+
+    rows = cursor.fetchall()
+    conn.close()
+
     logs = []
-    if os.path.exists(LOG_FILE):
-        with open(LOG_FILE, newline='') as file:
-            reader = csv.DictReader(file)
-            logs = list(reader)
-            logs.reverse()
+
+    for row in rows:
+        logs.append({
+            "timestamp": row[0],
+            "status": row[1],
+            "image_path": row[2]
+        })
+
     return logs
 
 @app.route("/login", methods=["GET","POST"])

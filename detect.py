@@ -1,3 +1,4 @@
+from database import init_db, insert_intrusion
 import cv2
 from ultralytics import YOLO
 import datetime
@@ -10,6 +11,7 @@ load_dotenv()
 EMAIL_SENDER = os.getenv("EMAIL_SENDER")
 EMAIL_PASSWORD = os.getenv("EMAIL_PASSWORD")
 EMAIL_RECEIVER = os.getenv("EMAIL_RECEIVER")
+init_db()
 
 def send_intruder_email(image_path, timestamp):
     try:
@@ -93,13 +95,11 @@ while True:
                 send_intruder_email(filename, current_time)
 
                 # Log to CSV
-                with open(log_file, mode='a', newline='') as file:
-                    writer = csv.writer(file)
-                    writer.writerow([
-                        current_time.strftime("%Y-%m-%d %H:%M:%S"),
-                        "INTRUDER",
-                        filename
-                    ])
+                insert_intrusion(
+                  current_time.strftime("%Y-%m-%d %H:%M:%S"),
+                  "INTRUDER",
+                   filename
+                )
 
                 print("Intruder logged and image saved.")
                 last_intruder_time = current_time
