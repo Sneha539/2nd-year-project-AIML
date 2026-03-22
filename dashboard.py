@@ -2,6 +2,22 @@ from flask import Flask, render_template, request, redirect, url_for, send_from_
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user
 import os
 import sqlite3
+import cv2
+from flask import Response
+
+camera = cv2.VideoCapture(0)
+def generate_frames():
+    while True:
+        success, frame = camera.read()
+        if not success:
+            break
+
+        else:
+            ret, buffer = cv2.imencode('.jpg', frame)
+            frame = buffer.tobytes()
+
+            yield (b'--frame\r\n'
+                   b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
 
 app = Flask(__name__)
 app.secret_key = "super_secret_key"
@@ -46,6 +62,12 @@ def read_logs():
         })
 
     return logs
+
+@app.route('/video_feed')
+@login_required
+def video_feed():
+    return Response(generate_frames(),
+                    mimetype='multipart/x-mixed-replace; boundary=frame')
 
 @app.route("/login", methods=["GET","POST"])
 def login():

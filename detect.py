@@ -3,7 +3,6 @@ import cv2
 from ultralytics import YOLO
 import datetime
 import os
-import csv
 import yagmail
 from dotenv import load_dotenv
 load_dotenv()
@@ -44,13 +43,6 @@ cap = cv2.VideoCapture(0)
 # Create folders if not exist
 if not os.path.exists("intruders"):
     os.makedirs("intruders")
-
-# Create log file if not exist
-log_file = "logs.csv"
-if not os.path.exists(log_file):
-    with open(log_file, mode='w', newline='') as file:
-        writer = csv.writer(file)
-        writer.writerow(["timestamp", "status", "image_path"])
 
 print("Camera started...")
 
