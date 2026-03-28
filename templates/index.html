@@ -28,19 +28,47 @@
 </head>
 <body>
 
-<h1>AI Campus Intrusion Dashboard</h1>
-<h3>Total Intrusions: {{ total_intrusions }}</h3>
-<h2>Live Camera Feed</h2>
+<div class="container mt-4">
 
-<img src="{{ url_for('video_feed') }}" width="500">
+    <!-- 🔹 Dashboard Title -->
+    <h1 class="mb-4">AI Campus Intrusion Dashboard</h1>
 
-{% for log in logs %}
-<div class="card">
-    <strong>Time:</strong> {{ log.timestamp }} <br>
-    <strong>Status:</strong> {{ log.status }} <br>
-    <img src="/{{ log.image_path }}" alt="Intruder Image">
+    <!-- 🔹 STEP 4: Show user role -->
+    <p><strong>Logged in as:</strong> {{ role }}</p>
+
+    <!-- 🔹 STEP 6: Role-based UI message -->
+    {% if role == "admin" %}
+        <p style="color:red;">Admin Controls Enabled</p>
+    {% else %}
+        <p style="color:gray;">Viewer Mode (Read Only)</p>
+    {% endif %}
+
+    <!-- 🔹 System status -->
+    <p class="text-success">System Status: Active Monitoring</p>
+
+    <!-- 🔹 Live camera -->
+    <h2>Live Camera Feed</h2>
+    <img src="{{ url_for('video_feed') }}" width="500">
+
+    <!-- 🔹 Intrusion count -->
+    <div class="alert alert-danger mt-3">
+        Total Intrusions: {{ total_intrusions }}
+    </div>
+
+    <!-- 🔹 Logs -->
+    {% for log in logs %}
+    <div class="card mb-3 shadow">
+        <div class="card-body">
+            <p><strong>Time:</strong> {{ log.timestamp }}</p>
+            <p><strong>Status:</strong> {{ log.status }}</p>
+
+            <img class="img-fluid rounded"
+            src="{{ url_for('intruder_image', filename=log.image_path.split('/')[-1]) }}">
+        </div>
+    </div>
+    {% endfor %}
+
 </div>
-{% endfor %}
 
 </body>
 </html>

@@ -37,8 +37,20 @@ def send_intruder_email(image_path, timestamp):
     except Exception as e:
         print("Email sending failed:", e)
 
-model = YOLO("yolov8n.pt")
-cap = cv2.VideoCapture(0)
+try:
+    model = YOLO("yolov8n.pt")
+except Exception as e:
+    print("Model Loading Error:", e)
+    exit()
+try:
+    cap = cv2.VideoCapture(0)
+
+    if not cap.isOpened():
+        raise Exception("Camera not accessible")
+
+except Exception as e:
+    print("Camera Error:", e)
+    exit()
 
 # Create folders if not exist
 if not os.path.exists("intruders"):
@@ -83,15 +95,21 @@ while True:
 
                 timestamp_str = current_time.strftime("%Y%m%d_%H%M%S")
                 filename = f"intruders/intruder_{timestamp_str}.jpg"
-                cv2.imwrite(filename, frame)
+                try:
+                    cv2.imwrite(filename, frame)
+                except Exception as e:
+                    print("Image Save Error:", e)
                 send_intruder_email(filename, current_time)
 
-                # Log to CSV
-                insert_intrusion(
-                  current_time.strftime("%Y-%m-%d %H:%M:%S"),
-                  "INTRUDER",
-                   filename
-                )
+                # Log to database
+                try:
+                    insert_intrusion(
+                        current_time.strftime("%Y-%m-%d %H:%M:%S"),
+                        "INTRUDER",
+                        filename
+                    )
+                except Exception as e:
+                    print("Database Error:", e)
 
                 print("Intruder logged and image saved.")
                 last_intruder_time = current_time

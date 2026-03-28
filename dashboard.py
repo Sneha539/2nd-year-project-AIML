@@ -1,5 +1,5 @@
-from flask import Flask, render_template, request, redirect, url_for, send_from_directory
-from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user
+from flask import Flask, render_template, request, redirect, url_for, send_from_directory, abort
+from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 import os
 import sqlite3
 import cv2
@@ -28,12 +28,20 @@ login_manager.login_view = "login"
 
 # Simple user database (for prototype)
 USERS = {
-    "admin": {"password": "admin123"}
+    "admin": {
+        "password": "admin123",
+        "role": "admin"
+    },
+    "viewer": {
+        "password": "viewer123",
+        "role": "viewer"
+    }
 }
 
 class User(UserMixin):
     def __init__(self, username):
         self.id = username
+        self.role = USERS[username]["role"]
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -95,8 +103,25 @@ def logout():
 def dashboard():
     logs = read_logs()
     total_intrusions = len(logs)
-    return render_template("index.html", logs=logs, total_intrusions=total_intrusions)
 
+    return render_template(
+        "index.html",
+        logs=logs,
+        total_intrusions=total_intrusions,
+        role=current_user.role
+    )
+
+@app.route("/admin")
+@login_required
+def admin_panel():
+    if current_user.role != "admin":
+        abort(403)
+
+    return "Admin Panel Access Granted"
+
+@app.errorhandler(403)
+def forbidden(e):
+    return "Access Denied (Admin Only)", 403
 @app.route('/intruders/<path:filename>')
 @login_required
 def intruder_image(filename):
