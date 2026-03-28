@@ -79,26 +79,16 @@ A secure web dashboard allows administrators to monitor activity in real-time.
 
 🧰 Technologies Used
 
-1. Programming	
-    Python
-2. AI/ML	
-    YOLOv8 (Ultralytics)
-3. Computer Vision	
-    OpenCV
-4. Web Framework	
-    Flask
-5. Authentication	
-    Flask-Login
-6. Database	
-    SQLite
-7. Email	
-    Yagmail (SMTP)
-8. IoT	
-    Arduino UNO R4
-9. Version Control	
-    Git & GitHub
-10. UI	
-    Bootstrap
+1. Programming → Python
+2. AI/ML → YOLOv8 (Ultralytics)
+3. Computer Vision → OpenCV
+4. Web Framework → Flask
+5. Authentication → Flask-Login
+6. Database → SQLite
+7. Email → Yagmail (SMTP)
+8. IoT → Arduino UNO R4
+9. Version Control → Git & GitHub
+10. UI → Bootstrap
 
 
 📂 Project Structure
