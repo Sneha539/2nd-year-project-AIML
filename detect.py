@@ -5,6 +5,11 @@ import datetime
 import os
 import yagmail
 from dotenv import load_dotenv
+import serial
+import time
+
+arduino = serial.Serial('COM3', 9600)  # change COM port
+time.sleep(2)
 load_dotenv()
 
 EMAIL_SENDER = os.getenv("EMAIL_SENDER")
@@ -112,6 +117,14 @@ while True:
                     print("Database Error:", e)
 
                 print("Intruder logged and image saved.")
+
+                 # 🔴 TRIGGER ARDUINO HERE
+                try:
+                    arduino.write(b'ALERT\n')
+                    print("Arduino alert sent")
+                except Exception as e:
+                    print("Arduino Error:", e)
+
                 last_intruder_time = current_time
 
     cv2.imshow("Campus Security Camera", frame)
